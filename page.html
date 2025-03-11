@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    /* Basic styling for the entire page */
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 10px;
+      background-color: #f5f5f5;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit; /* Ensures consistent box model across elements */
+    }
+    
+    /* Header styling with blue theme */
+    h2 {
+      color: #ffffff;
+      background-color: #0F52BA; /* Sapphire blue */
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      margin-top: 0;
+      text-align: center;
+      font-size: 18px;
+    }
+    
+    /* Section header styling */
+    h3 {
+      font-size: 14px;
+      margin: 15px 0 8px;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+    
+    /* Form field label styling */
+    label {
+      display: block;
+      margin-top: 8px;
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    /* Side-by-side layout for date and time fields */
+    .date-time-container {
+      display: flex;
+      gap: 5px;
+    }
+    
+    /* Input field styling */
+    input[type="date"], input[type="time"], select {
+      padding: 8px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+      transition: border-color 0.3s;
+      font-size: 13px;
+      width: 100%;
+    }
+    
+    /* Date field gets more width than time field */
+    input[type="date"] {
+      flex: 3;
+    }
+    input[type="time"] {
+      flex: 2;
+    }
+    
+    /* Focus state for form fields */
+    input[type="date"]:focus, input[type="time"]:focus, select:focus {
+      border-color: #0F52BA;
+      outline: none;
+    }
+    
+    /* Button styling */
+    input[type="button"] {
+      background-color: #0F52BA;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    
+    /* Button hover effect */
+    input[type="button"]:hover {
+      background-color: #0D47A1;
+    }
+    
+    /* Center alignment container */
+    .center {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    /* Responsive image sizing */
+    .responsive-img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Help text styling with light blue background */
+    .help-text {
+      font-size: 12px;
+      color: #555;
+      margin-top: 5px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      background-color: #e9f5ff;
+      padding: 8px;
+      border-radius: 4px;
+      border-left: 3px solid #0F52BA;
+    }
+    
+    /* Text highlight styles */
+    .highlight {
+      font-weight: 500;
+      color: #0F52BA;
+    }
+    .highlight-important {
+      font-weight: bold;
+      color: #e53935;
+    }
+    
+    /* Form layout grouping */
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-section {
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+    }
+    
+    /* Success message styling (initially hidden) */
+    .success-message {
+      display: none;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      text-align: center;
+    }
+    
+    /* Loading indicator (initially hidden) */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      font-style: italic;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main title for the sidebar -->
+  <h2>Event Scheduler</h2>
+  
+  <!-- Main form for event scheduling -->
+  <form id="eventForm">
+    <!-- SECTION 1: Event Type Selection -->
+    <div class="form-section">
+      <h3>Event Type</h3>
+      <div class="form-group">
+        <label for="contentType">Select Event Type</label>
+        <select id="contentType" name="contentType" required>
+          <option value="">-- Select Type --</option>
+          <option value="CTA - Territory Launch">CTA - Territory Launch</option>
+          <option value="CTA - Territory Defense">CTA - Territory Defense</option>
+          <option value="CTA - HO Placement">CTA - HO Placement</option>
+          <option value="CTA - HO Defense">CTA - HO Defense</option>
+          <option value="CTA - ZvZ">CTA - ZvZ</option>
+          <option value="CTA - Invasion Day!">CTA - Invasion Day!</option>
+          <option value="CTA - Gold Castle/OPs">CTA - Gold Castle/OPs</option>
+          <option value="Castle/OPs">Castle/OPs</option>
+          <option value="Bombing">Bombing</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- SECTION 2: Date and Time Selection -->
+    <div class="form-section">
+      <h3>Date &amp; Time</h3>
+      <!-- Massing time - when players should gather -->
+      <div class="form-group">
+        <label for="date1">Massing Date/Time</label>
+        <div class="date-time-container">
+          <input type="date" id="date1" name="date1" required>
+          <input type="time" id="time1" name="time1" required>
+        </div>
+        <!-- Helpful tips for scheduling -->
+        <div class="help-text">
+          <span class="highlight">Planning Tips:</span><br>
+          • Schedule massing <span class="highlight">at least 30 minutes</span> before zoning out<br>
+          • For OCULAR University members, add <span class="highlight">an extra 15 minutes</span> for their massing process
+        </div>
+      </div>
+
+      <!-- Zoning time - when players should enter the zone -->
+      <div class="form-group">
+        <label for="date2">Zoning Date/Time</label>
+        <div class="date-time-container">
+          <input type="date" id="date2" name="date2" required>
+          <input type="time" id="time2" name="time2" required>
+        </div>
+      </div>
+    </div>
+    
+    <!-- SECTION 3: Caller Selection -->
+    <div class="form-section">
+      <h3>Callers</h3>
+      <!-- Main caller selection (required) -->
+      <div class="form-group">
+        <label for="caller">Main Caller</label>
+        <select id="caller" name="caller" required>
+          <option value="">-- Select Caller --</option>
+          <option value="poiKOI">poiKOI</option>
+          <option value="Rebelwar">Rebelwar</option>
+          <option value="Xarlithion">Xarlithion</option>
+          <option value="Saga">Saga</option>
+          <option value="ShemDaddy">ShemDaddy</option>
+          <option value="Goblin">Goblin</option>
+          <option value="KindaHype">KindaHype</option>
+          <option value="Backwoods">Backwoods</option>
+        </select>
+      </div>
+      
+      <!-- Secondary caller selection (optional) -->
+      <div class="form-group">
+        <label for="secondaryCaller">Secondary Caller</label>
+        <select id="secondaryCaller" name="secondaryCaller">
+          <option value="">-- Select Secondary Caller --</option>
+          <option value="poiKOI">poiKOI</option>
+          <option value="Rebelwar">Rebelwar</option>
+          <option value="Xarlithion">Xarlithion</option>
+          <option value="Saga">Saga</option>
+          <option value="ShemDaddy">ShemDaddy</option>
+          <option value="Goblin">Goblin</option>
+          <option value="KindaHype">KindaHype</option>
+          <option value="Backwoods">Backwoods</option>
+        </select>
+      </div>
+      
+      <!-- Escape caller selection (optional) -->
+      <div class="form-group">
+        <label for="escapeCaller">Escape Caller</label>
+        <select id="escapeCaller" name="escapeCaller">
+          <option value="">-- Select Escape Caller --</option>
+          <option value="poiKOI">poiKOI</option>
+          <option value="Rebelwar">Rebelwar</option>
+          <option value="Xarlithion">Xarlithion</option>
+          <option value="Saga">Saga</option>
+          <option value="ShemDaddy">ShemDaddy</option>
+          <option value="Goblin">Goblin</option>
+          <option value="KindaHype">KindaHype</option>
+          <option value="Backwoods">Backwoods</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- SECTION 4: Party Composition Selection -->
+    <div class="form-section">
+      <h3>Party Composition</h3>
+      <div class="form-group">
+        <label for="compTitle">Select Party Composition</label>
+        <select id="compTitle" name="compTitle">
+          <option value="">-- Select Composition --</option>
+          <option value="CLAP KITE">CLAP KITE</option>
+          <option value="CLAP SOAK">CLAP SOAK</option>
+          <option value="CLAP BRAWL">CLAP BRAWL</option>
+          <option value="MONKEY BRAWL">MONKEY BRAWL</option>
+          <option value="WALK-IN BRAWL">WALK-IN BRAWL</option>
+        </select>
+        <!-- Helpful information about compositions -->
+        <div class="help-text">
+          <span class="highlight">Note:</span> Selecting a composition will organize party roles across multiple sections for better visibility.<br>
+          <span class="highlight-important">Important:</span> For each dropdown field, select one option that best fits the role you're willing to play.
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit button and status messages -->
+    <input type="button" value="Submit" onclick="submitForm()">
+    <div id="successMessage" class="success-message">Event scheduled successfully!</div>
+    <div id="loadingMessage" class="loading">Processing composition data...</div>
+  </form>
+
+  <!-- Massing/Zoning information graphic -->
+  <div class="center">
+    <img src="https://i.imgur.com/ZXcQIrQ.png" alt="Massing/Zoning Image" class="responsive-img">
+  </div>
+
+  <script>
+    /**
+     * Submits the form data to the Google Apps Script backend
+     * Gathers all form field values and validates required fields
+     */
+    function submitForm() {
+      // Show loading message during processing
+      document.getElementById('loadingMessage').style.display = 'block';
+      
+      // Gather form data from all fields
+      var contentType = document.getElementById('contentType').value;
+      var date1 = document.getElementById('date1').value;
+      var time1 = document.getElementById('time1').value;
+      var date2 = document.getElementById('date2').value;
+      var time2 = document.getElementById('time2').value;
+      var caller = document.getElementById('caller').value;
+      var secondaryCaller = document.getElementById('secondaryCaller').value;
+      var escapeCaller = document.getElementById('escapeCaller').value;
+      var compTitle = document.getElementById('compTitle').value;
+      
+      // Validate required fields
+      if (!contentType || !date1 || !time1 || !date2 || !time2 || !caller) {
+        document.getElementById('loadingMessage').style.display = 'none';
+        alert("Please fill in all required fields.");
+        return;
+      }
+      
+      // Standardize caller names for consistency (helps with name matching)
+      caller = standardizeName(caller);
+      secondaryCaller = standardizeName(secondaryCaller || "N/A");
+      escapeCaller = standardizeName(escapeCaller || "N/A");
+      
+      // Prepare data object to send to Google Apps Script
+      var data = {
+        contentType: contentType,
+        massingDateTime: date1 + 'T' + time1 + ':00', // ISO format datetime
+        zoningDateTime: date2 + 'T' + time2 + ':00',  // ISO format datetime
+        caller: caller,
+        secondaryCaller: secondaryCaller,
+        escapeCaller: escapeCaller,
+        compTitle: compTitle
+      };
+      
+      // Send data to the Google Apps Script function setEventData
+      google.script.run
+        .withSuccessHandler(function() {
+          // On success: Hide loading message and show success message
+          document.getElementById('loadingMessage').style.display = 'none';
+          var successMessage = document.getElementById('successMessage');
+          successMessage.style.display = 'block';
+          
+          // Auto-close the sidebar after 2 seconds
+          setTimeout(function() {
+            google.script.host.close();
+          }, 2000);
+        })
+        .withFailureHandler(function(error) {
+          // On failure: Hide loading message and show detailed error
+          document.getElementById('loadingMessage').style.display = 'none';
+          
+          // Show more detailed error information
+          var errorMsg = "Error: " + (error.message || "Unknown error");
+          if (error.stack) {
+            console.error(error.stack);
+            errorMsg += "\n\nCheck browser console for details.";
+          }
+          
+          alert(errorMsg);
+        })
+        .setEventData(data);
+    }
+    
+    /**
+     * Standardizes name formatting for consistent display
+     * Converts to title case (first letter of each word capitalized)
+     * 
+     * @param {string} name - The name to standardize
+     * @return {string} - The standardized name
+     */
+    function standardizeName(name) {
+      if (!name || name === "N/A") return name;
+      
+      // Convert name to title case (capitalize first letter of each word)
+      return name.split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+    
+    /**
+     * Sets today's date as default for date fields when the form loads
+     * Called automatically when the page loads
+     */
+    window.onload = function() {
+      var today = new Date();
+      var dateStr = today.toISOString().substr(0, 10); // Format as YYYY-MM-DD
+      document.getElementById('date1').value = dateStr;
+      document.getElementById('date2').value = dateStr;
+    }
+    
+    /**
+     * Error handling to catch any unhandled errors
+     */
+    window.onerror = function(message, source, line, column, error) {
+      alert("Error: " + message + "\nLine: " + line);
+      console.error(error);
+      document.getElementById('loadingMessage').style.display = 'none';
+      return true;
+    };
+  </script>
+</body>
+</html>
